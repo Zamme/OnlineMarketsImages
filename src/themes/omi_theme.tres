@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://ctwdfkupbpb0h"]
+
+[ext_resource type="FontFile" uid="uid://b8i0n0pvdi16k" path="res://assets/fonts/Sunregular.ttf" id="1_qhxqt"]
+
+[resource]
+default_font = ExtResource("1_qhxqt")
+Label/fonts/font = ExtResource("1_qhxqt")

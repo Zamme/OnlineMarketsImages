@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3 uid="uid://brii76d4x381y"]
+
+[ext_resource type="Script" path="res://src/scripts/MainMenu.gd" id="1_0wli3"]
+[ext_resource type="Theme" uid="uid://ctwdfkupbpb0h" path="res://src/themes/omi_theme.tres" id="2_4lklx"]
+[ext_resource type="FontFile" uid="uid://b8i0n0pvdi16k" path="res://assets/fonts/Sunregular.ttf" id="3_uk4w8"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7383h"]
+font = ExtResource("3_uk4w8")
+font_size = 71
+
+[node name="MainMenuControl" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0wli3")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_4lklx")
+text = "OMI"
+label_settings = SubResource("LabelSettings_7383h")
+horizontal_alignment = 1
+vertical_alignment = 1
