@@ -1,12 +1,8 @@
 class_name AddFilesDialog extends FileDialog
 
 
-var current_files_selected : PackedStringArray
-
-
 func _ready():
-	pass
-
+	GlobalLinks.add_files_dialog = self
 
 func _on_files_selected(paths):
-	current_files_selected = paths
+	GlobalLinks.main_menu_control.set_files_selected(paths)

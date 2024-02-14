@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://brii76d4x381y"]
+[gd_scene load_steps=7 format=3 uid="uid://brii76d4x381y"]
 
 [ext_resource type="Script" path="res://src/scripts/MainMenu.gd" id="1_0wli3"]
 [ext_resource type="Theme" uid="uid://ctwdfkupbpb0h" path="res://src/themes/omi_theme.tres" id="2_4lklx"]
@@ -9,6 +9,8 @@
 font = ExtResource("3_uk4w8")
 font_size = 71
 
+[sub_resource type="ButtonGroup" id="ButtonGroup_c1wii"]
+
 [node name="MainMenuControl" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -16,6 +18,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_4lklx")
 script = ExtResource("1_0wli3")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
@@ -44,16 +47,16 @@ vertical_alignment = 1
 [node name="CentralHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer"]
+[node name="InputVBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer"]
 layout_mode = 2
 
-[node name="AddFilesButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/VBoxContainer"]
+[node name="AddFilesButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "Add files"
 
-[node name="ItemList" type="ItemList" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/VBoxContainer"]
+[node name="FilesItemList" type="ItemList" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer"]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 theme = ExtResource("2_4lklx")
@@ -62,6 +65,70 @@ select_mode = 1
 auto_height = true
 item_count = 1
 item_0/text = "file_01"
+
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/VBoxContainer/CentralHBoxContainer"]
+layout_mode = 2
+
+[node name="MarketsVBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer"]
+layout_mode = 2
+
+[node name="StoretitleLabel" type="Label" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_4lklx")
+theme_override_font_sizes/font_size = 26
+text = "Store"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer"]
+layout_mode = 2
+
+[node name="AppStoreMenuButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_c1wii")
+text = "App Store"
+
+[node name="PlayStoreMenuButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_c1wii")
+text = "Play Store"
+
+[node name="StoreInfoVBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_4lklx")
+
+[node name="StoreOptionsHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_4lklx")
+alignment = 1
+
+[node name="AllButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/StoreOptionsHBoxContainer"]
+layout_mode = 2
+text = "All"
+
+[node name="NoneButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/StoreOptionsHBoxContainer"]
+layout_mode = 2
+text = "None
+"
+
+[node name="VSeparator2" type="VSeparator" parent="PanelContainer/VBoxContainer/CentralHBoxContainer"]
+layout_mode = 2
+
+[node name="TargetVBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer"]
+layout_mode = 2
+
+[node name="SelectDestinationButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+layout_mode = 2
+text = "Select Destination Folder"
+
+[node name="DestPathLabel" type="Label" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_4lklx")
+
+[node name="MakeImagesButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+layout_mode = 2
+text = "Make Images"
 
 [node name="BottomHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
@@ -75,10 +142,9 @@ theme_override_font_sizes/font_size = 36
 text = "Quit"
 
 [node name="AddFilesDialog" type="FileDialog" parent="."]
-unique_name_in_owner = true
-title = "Add File(s)"
+title = "Open File(s)"
+position = Vector2i(0, 36)
 size = Vector2i(1032, 500)
-visible = true
 popup_window = true
 min_size = Vector2i(200, 500)
 content_scale_mode = 2
@@ -86,8 +152,23 @@ content_scale_aspect = 1
 ok_button_text = "Open"
 file_mode = 1
 access = 2
+filters = PackedStringArray("*.png", "*.jpg", "*.svg")
 script = ExtResource("4_mwlbk")
 
-[connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/VBoxContainer/AddFilesButton" to="." method="_on_add_files_button_button_up"]
+[node name="DestFileDialog" type="FileDialog" parent="."]
+title = "Select Destination Directory"
+size = Vector2i(1149, 500)
+min_size = Vector2i(200, 500)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+
+[connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer/AddFilesButton" to="." method="_on_add_files_button_button_up"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer/AppStoreMenuButton" to="." method="_on_app_store_menu_button_toggled"]
+[connection signal="toggled" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer/PlayStoreMenuButton" to="." method="_on_play_store_menu_button_toggled"]
+[connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/StoreOptionsHBoxContainer/AllButton" to="." method="_on_all_button_button_up"]
+[connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/StoreOptionsHBoxContainer/NoneButton" to="." method="_on_none_button_button_up"]
+[connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/SelectDestinationButton" to="." method="_on_select_destination_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/BottomHBoxContainer/ExitButton" to="." method="_on_exit_button_button_up"]
 [connection signal="files_selected" from="AddFilesDialog" to="AddFilesDialog" method="_on_files_selected"]
+[connection signal="dir_selected" from="DestFileDialog" to="." method="_on_dest_file_dialog_dir_selected"]
