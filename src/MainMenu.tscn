@@ -1,15 +1,20 @@
-[gd_scene load_steps=7 format=3 uid="uid://brii76d4x381y"]
+[gd_scene load_steps=10 format=3 uid="uid://brii76d4x381y"]
 
 [ext_resource type="Script" path="res://src/scripts/MainMenu.gd" id="1_0wli3"]
 [ext_resource type="Theme" uid="uid://ctwdfkupbpb0h" path="res://src/themes/omi_theme.tres" id="2_4lklx"]
 [ext_resource type="FontFile" uid="uid://b8i0n0pvdi16k" path="res://assets/fonts/Sunregular.ttf" id="3_uk4w8"]
 [ext_resource type="Script" path="res://src/scripts/AddFilesDialog.gd" id="4_mwlbk"]
+[ext_resource type="Script" path="res://src/scripts/MakingImagePopup.gd" id="5_cl5u6"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_7383h"]
 font = ExtResource("3_uk4w8")
 font_size = 71
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_c1wii"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_ub75q"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_8yggt"]
 
 [node name="MainMenuControl" type="Control"]
 layout_mode = 3
@@ -130,6 +135,34 @@ theme = ExtResource("2_4lklx")
 layout_mode = 2
 placeholder_text = "Files Prefix"
 
+[node name="ExtensionHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+layout_mode = 2
+
+[node name="JPGCheckBox" type="CheckBox" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/ExtensionHBoxContainer"]
+layout_mode = 2
+button_pressed = true
+button_group = SubResource("ButtonGroup_ub75q")
+text = "JPG"
+
+[node name="PNGCheckBox" type="CheckBox" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/ExtensionHBoxContainer"]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_ub75q")
+text = "PNG"
+
+[node name="SaveOrderingHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+layout_mode = 2
+
+[node name="ByImageCheckBox" type="CheckBox" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/SaveOrderingHBoxContainer"]
+layout_mode = 2
+button_pressed = true
+button_group = SubResource("ButtonGroup_8yggt")
+text = "By Image"
+
+[node name="ByResolutionCheckBox" type="CheckBox" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/SaveOrderingHBoxContainer"]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_8yggt")
+text = "By Resolution"
+
 [node name="MakeImagesButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
 layout_mode = 2
 text = "Make Images"
@@ -168,6 +201,35 @@ file_mode = 2
 access = 2
 
 [node name="IncorrectAcceptDialog" type="AcceptDialog" parent="."]
+
+[node name="MakingImagePopup" type="Popup" parent="."]
+title = "Making image ..."
+position = Vector2i(100, 100)
+size = Vector2i(200, 200)
+visible = true
+min_size = Vector2i(200, 200)
+script = ExtResource("5_cl5u6")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MakingImagePopup"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -54.5
+offset_top = -22.0
+offset_right = 54.5
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CurrentImageProcessedNameLabel" type="Label" parent="MakingImagePopup/VBoxContainer"]
+layout_mode = 2
+text = "Current Image name"
+
+[node name="TotalProcessProgressBar" type="ProgressBar" parent="MakingImagePopup/VBoxContainer"]
+layout_mode = 2
+value = 50.0
 
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer/AddFilesButton" to="." method="_on_add_files_button_button_up"]
 [connection signal="toggled" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer/AppStoreMenuButton" to="." method="_on_app_store_menu_button_toggled"]

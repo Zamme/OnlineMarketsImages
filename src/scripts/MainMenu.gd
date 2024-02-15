@@ -14,6 +14,11 @@ const DEFAULT_PREFIX = "OMI_Image_"
 @onready var store_options_hbox : HBoxContainer = find_child("StoreOptionsHBoxContainer")
 @onready var incorrect_accept_dialog : AcceptDialog = find_child("IncorrectAcceptDialog")
 @onready var prefix_line_edit : LineEdit = find_child("PrefixLineEdit")
+@onready var jpg_check : CheckBox = find_child("JPGCheckBox")
+@onready var png_check : CheckBox = find_child("PNGCheckBox")
+@onready var by_image_check : CheckBox = find_child("ByImageCheckBox")
+@onready var by_resolution_check : CheckBox = find_child("ByResolutionCheckBox")
+@onready var making_image_popup : MakingImagePopup = find_child("MakingImagePopup")
 
 var markets : Array
 
@@ -29,6 +34,11 @@ func _ready():
 	get_markets()
 	update_files_item_list()
 	update_store_options_hbox()
+	test_01()
+
+func add_image_size_pressed_button(_but_index : int):
+	if current_store_images_type_selected.find(_but_index) < 0:
+		current_store_images_type_selected.append(_but_index)
 
 func clear_files_item_list():
 	files_item_list.clear()
@@ -63,15 +73,79 @@ func is_input_files_correct():
 func is_store_correct():
 	return (current_store_id_selected > -1)
 
-func make_images():
+func make_image(_source_image : Image, _image_entity : ImageEntity):
+	var _image_created : Image = Image.new()
+	print("Making image ", _image_entity._ID, " ", _image_entity._SizeA, "x", _image_entity._SizeB)
+	_image_created.copy_from(_source_image)
+	_image_created.resize(_image_entity._SizeA, _image_entity._SizeB, Image.INTERPOLATE_BILINEAR)
+	return _image_created
+
+func make_images_by_image():
 	print("Making images...")
-	
+	#print(current_store_images_type_selected)
+	making_image_popup.reset_values()
+	making_image_popup.popup_centered()
+	var PER_IMAGE_VALUE : float = 100/(current_files_selected.size() * current_store_images_type_selected.size())
+	var current_progress_value = 0
+	for current_source in current_files_selected:
+		var _current_source_name : String = current_source.get_file()
+		var _n_parts : Array = _current_source_name.split(".")
+		_current_source_name = _n_parts[0]
+		var _source_image : Image = Image.load_from_file(current_source)
+		var _new_dir_name : String = _current_source_name
+		for current_image_size_index in current_store_images_type_selected:
+			var _image_entity : ImageEntity = markets[current_store_id_selected]._Images[current_image_size_index]
+			var new_image = make_image(_source_image, _image_entity)
+			var _file_name : String = prefix_line_edit.text + str(_image_entity._SizeA) + "x" + str(_image_entity._SizeB)
+			making_image_popup.set_image_name(_current_source_name + "_" + _file_name)
+			if DirAccess.dir_exists_absolute(current_dest_path + _new_dir_name):
+				pass
+			else:
+				DirAccess.make_dir_absolute(current_dest_path + _new_dir_name)
+			var _dest_path : String = current_dest_path + _new_dir_name + "/" + _current_source_name + "_" + _file_name
+			if jpg_check.button_pressed:
+				_dest_path += ".jpg"
+				new_image.save_jpg(_dest_path)
+			else:
+				_dest_path += ".png"
+				new_image.save_png(_dest_path)
+			current_progress_value += PER_IMAGE_VALUE
+
+func make_images_by_resolution():
+	print("Making images...")
+	print(current_store_images_type_selected)
+	for current_source in current_files_selected:
+		var _current_source_name : String = current_source.get_file()
+		var _n_parts : Array = _current_source_name.split(".")
+		_current_source_name = _n_parts[0]
+		var _source_image : Image = Image.load_from_file(current_source)
+		for current_image_size_index in current_store_images_type_selected:
+			var _image_entity : ImageEntity = markets[current_store_id_selected]._Images[current_image_size_index]
+			var new_image = make_image(_source_image, _image_entity)
+			var _file_name : String = str(_image_entity._SizeA) + "x" + str(_image_entity._SizeB)
+			var _new_dir_name : String = _file_name
+			if DirAccess.dir_exists_absolute(current_dest_path + _new_dir_name):
+				pass
+			else:
+				DirAccess.make_dir_absolute(current_dest_path + _new_dir_name)
+			var _dest_path : String = current_dest_path + _new_dir_name + "/" + _current_source_name + "_" + _file_name
+			if jpg_check.button_pressed:
+				_dest_path += ".jpg"
+				new_image.save_jpg(_dest_path)
+			else:
+				_dest_path += ".png"
+				new_image.save_png(_dest_path)
 
 func open_add_files_interface():
 	add_files_dialog.popup_centered()
 
 func open_dest_file_dialog():
 	dest_files_dialog.popup_centered()
+
+func remove_image_size_pressed_button(_but_index : int):
+	var _found_pos : int = current_store_images_type_selected.find(_but_index)
+	if _found_pos > -1:
+		current_store_images_type_selected.remove_at(_found_pos)
 
 func set_files_selected(_paths):
 	current_files_selected = _paths
@@ -95,10 +169,12 @@ func update_store_info():
 	for lab in store_info_vbox.get_children():
 		store_info_vbox.remove_child(lab)
 		lab.queue_free()
+	current_store_images_type_selected.clear()
 	var current_market = markets[current_store_id_selected]
 	for _image in current_market._Images:
-		var new_line : Button = store_info_button_prefab.instantiate()
+		var new_line : StoreInfoButton = store_info_button_prefab.instantiate()
 		new_line.text = str(_image._SizeA) + " x " + str(_image._SizeB)
+		new_line.set_button_index(_image._ID)
 		store_info_vbox.add_child(new_line)
 	update_store_options_hbox()
 
@@ -133,20 +209,34 @@ func _on_dest_file_dialog_dir_selected(dir):
 
 func _on_all_button_button_up():
 	for _info_button in store_info_vbox.get_children():
-		_info_button.button_pressed = true
+		_info_button.set_button_pressed(true)
 
 func _on_none_button_button_up():
 	for _info_button in store_info_vbox.get_children():
-		_info_button.button_pressed = false
+		_info_button.set_button_pressed(false)
 
 func _on_make_images_button_button_up():
 	if is_dest_correct():
 		if is_input_files_correct():
 			if is_store_correct():
-				make_images()
+				if by_image_check.button_pressed:
+					make_images_by_image()
+				else:
+					make_images_by_resolution()
 			else:
 				show_incorrect_dialog("No Store Images selected")
 		else:
 			show_incorrect_dialog("No Input files selected")
 	else:
 		show_incorrect_dialog("Dest folder not selected or not empty")
+
+### TESTING ###
+func test_01():
+	_on_dest_file_dialog_dir_selected("/mnt/1704BF56620B1DF2/Google_Drive/Vilo_Studio/InDev_Apps/OnlineMarketImages/t1/")
+	_on_app_store_menu_button_toggled(true)
+	set_files_selected(["/mnt/1704BF56620B1DF2/Google_Drive/Vilo_Studio/InDev_Apps/OnlineMarketImages/PS_Shots/IMG_0285.PNG"])
+	#current_dest_path = "/mnt/1704BF56620B1DF2/Google_Drive/Vilo_Studio/InDev_Apps/OnlineMarketImages/t1/"
+	#current_files_selected = ["/mnt/1704BF56620B1DF2/Google_Drive/Vilo_Studio/InDev_Apps/OnlineMarketImages/PS_Shots/IMG_0285.PNG"]
+	#current_store_id_selected = 0
+	#current_store_images_type_selected = [0,1]
+	#make_images()
