@@ -126,6 +126,10 @@ text = "Select Destination Folder"
 layout_mode = 2
 theme = ExtResource("2_4lklx")
 
+[node name="PrefixLineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+layout_mode = 2
+placeholder_text = "Files Prefix"
+
 [node name="MakeImagesButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
 layout_mode = 2
 text = "Make Images"
@@ -156,12 +160,14 @@ filters = PackedStringArray("*.png", "*.jpg", "*.svg")
 script = ExtResource("4_mwlbk")
 
 [node name="DestFileDialog" type="FileDialog" parent="."]
-title = "Select Destination Directory"
+title = "Open a Directory"
 size = Vector2i(1149, 500)
 min_size = Vector2i(200, 500)
 ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
+
+[node name="IncorrectAcceptDialog" type="AcceptDialog" parent="."]
 
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer/AddFilesButton" to="." method="_on_add_files_button_button_up"]
 [connection signal="toggled" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer/AppStoreMenuButton" to="." method="_on_app_store_menu_button_toggled"]
@@ -169,6 +175,7 @@ access = 2
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/StoreOptionsHBoxContainer/AllButton" to="." method="_on_all_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/StoreOptionsHBoxContainer/NoneButton" to="." method="_on_none_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/SelectDestinationButton" to="." method="_on_select_destination_button_button_up"]
+[connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/MakeImagesButton" to="." method="_on_make_images_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/BottomHBoxContainer/ExitButton" to="." method="_on_exit_button_button_up"]
 [connection signal="files_selected" from="AddFilesDialog" to="AddFilesDialog" method="_on_files_selected"]
 [connection signal="dir_selected" from="DestFileDialog" to="." method="_on_dest_file_dialog_dir_selected"]
