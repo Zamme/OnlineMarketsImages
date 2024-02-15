@@ -8,7 +8,7 @@ const DEFAULT_PREFIX = "OMI_Image_"
 
 @onready var add_files_dialog : FileDialog = find_child("AddFilesDialog")
 @onready var dest_files_dialog : FileDialog = find_child("DestFileDialog")
-@onready var files_item_list : ItemList = find_child("FilesItemList")
+@onready var input_files_vbox : VBoxContainer = find_child("InputFilesVBox")
 @onready var store_info_vbox : VBoxContainer = find_child("StoreInfoVBoxContainer")
 @onready var dest_path_label : Label = find_child("DestPathLabel")
 @onready var store_options_hbox : HBoxContainer = find_child("StoreOptionsHBoxContainer")
@@ -20,10 +20,12 @@ const DEFAULT_PREFIX = "OMI_Image_"
 @onready var by_resolution_check : CheckBox = find_child("ByResolutionCheckBox")
 @onready var making_image_popup : MakingImagePopup = find_child("MakingImagePopup")
 
+var store_info_button_prefab : PackedScene = load("res://src/store_info_button.tscn")
+var input_file_item_control_prefab : PackedScene = load("res://src/input_file_item_control.tscn")
+
 var markets : Array
 
 var current_files_selected : PackedStringArray
-var store_info_button_prefab : PackedScene = load("res://src/store_info_button.tscn")
 var current_store_id_selected : int = -1
 var current_dest_path : String = ""
 var current_store_images_type_selected : Array = Array()
@@ -34,14 +36,22 @@ func _ready():
 	get_markets()
 	update_files_item_list()
 	update_store_options_hbox()
-	test_01()
+	#test_01()
+
+func add_files_selected(_paths):
+	current_files_selected.append_array(_paths)
+	update_files_item_list()
 
 func add_image_size_pressed_button(_but_index : int):
 	if current_store_images_type_selected.find(_but_index) < 0:
 		current_store_images_type_selected.append(_but_index)
 
 func clear_files_item_list():
-	files_item_list.clear()
+	for _input_file in input_files_vbox.get_children():
+		_input_file.queue_free()
+
+func clear_files_list():
+	current_files_selected.clear()
 
 func get_markets():
 	markets = Array()
@@ -71,7 +81,12 @@ func is_input_files_correct():
 	return !current_files_selected.is_empty()
 
 func is_store_correct():
-	return (current_store_id_selected > -1)
+	var _is_correct : bool = true
+	if current_store_images_type_selected.size() < 1:
+		_is_correct = false
+	elif current_store_id_selected < 0:
+		_is_correct = false
+	return _is_correct
 
 func make_image(_source_image : Image, _image_entity : ImageEntity):
 	var _image_created : Image = Image.new()
@@ -85,8 +100,10 @@ func make_images_by_image():
 	#print(current_store_images_type_selected)
 	making_image_popup.reset_values()
 	making_image_popup.popup_centered()
+	@warning_ignore("integer_division")
 	var PER_IMAGE_VALUE : float = 100/(current_files_selected.size() * current_store_images_type_selected.size())
 	var current_progress_value = 0
+	var market_name : String = markets[current_store_id_selected]._Name
 	for current_source in current_files_selected:
 		var _current_source_name : String = current_source.get_file()
 		var _n_parts : Array = _current_source_name.split(".")
@@ -98,11 +115,15 @@ func make_images_by_image():
 			var new_image = make_image(_source_image, _image_entity)
 			var _file_name : String = prefix_line_edit.text + str(_image_entity._SizeA) + "x" + str(_image_entity._SizeB)
 			making_image_popup.set_image_name(_current_source_name + "_" + _file_name)
-			if DirAccess.dir_exists_absolute(current_dest_path + _new_dir_name):
+			if DirAccess.dir_exists_absolute(current_dest_path + "/" + market_name):
 				pass
 			else:
-				DirAccess.make_dir_absolute(current_dest_path + _new_dir_name)
-			var _dest_path : String = current_dest_path + _new_dir_name + "/" + _current_source_name + "_" + _file_name
+				DirAccess.make_dir_absolute(current_dest_path + "/" + market_name)
+			if DirAccess.dir_exists_absolute(current_dest_path + "/" + market_name + "/" + _new_dir_name):
+				pass
+			else:
+				DirAccess.make_dir_absolute(current_dest_path + "/" + market_name + "/" + _new_dir_name)
+			var _dest_path : String = current_dest_path + "/" + market_name + "/" + _new_dir_name + "/" + _current_source_name + "_" + _file_name
 			if jpg_check.button_pressed:
 				_dest_path += ".jpg"
 				new_image.save_jpg(_dest_path)
@@ -110,10 +131,18 @@ func make_images_by_image():
 				_dest_path += ".png"
 				new_image.save_png(_dest_path)
 			current_progress_value += PER_IMAGE_VALUE
+			making_image_popup.set_process_value(current_progress_value)
+	making_image_popup.hide()
 
 func make_images_by_resolution():
 	print("Making images...")
-	print(current_store_images_type_selected)
+	#print(current_store_images_type_selected)
+	making_image_popup.reset_values()
+	making_image_popup.popup_centered()
+	@warning_ignore("integer_division")
+	var PER_IMAGE_VALUE : float = 100/(current_files_selected.size() * current_store_images_type_selected.size())
+	var current_progress_value = 0
+	var market_name : String = markets[current_store_id_selected]._Name
 	for current_source in current_files_selected:
 		var _current_source_name : String = current_source.get_file()
 		var _n_parts : Array = _current_source_name.split(".")
@@ -124,17 +153,24 @@ func make_images_by_resolution():
 			var new_image = make_image(_source_image, _image_entity)
 			var _file_name : String = str(_image_entity._SizeA) + "x" + str(_image_entity._SizeB)
 			var _new_dir_name : String = _file_name
-			if DirAccess.dir_exists_absolute(current_dest_path + _new_dir_name):
+			if DirAccess.dir_exists_absolute(current_dest_path + "/" + market_name):
 				pass
 			else:
-				DirAccess.make_dir_absolute(current_dest_path + _new_dir_name)
-			var _dest_path : String = current_dest_path + _new_dir_name + "/" + _current_source_name + "_" + _file_name
+				DirAccess.make_dir_absolute(current_dest_path + "/" + market_name)
+			if DirAccess.dir_exists_absolute(current_dest_path + "/" + market_name + "/" + _new_dir_name):
+				pass
+			else:
+				DirAccess.make_dir_absolute(current_dest_path + "/" + market_name + "/" + _new_dir_name)
+			var _dest_path : String = current_dest_path + "/" + market_name + "/" + _new_dir_name + "/" + _current_source_name + "_" + _file_name
 			if jpg_check.button_pressed:
 				_dest_path += ".jpg"
 				new_image.save_jpg(_dest_path)
 			else:
 				_dest_path += ".png"
 				new_image.save_png(_dest_path)
+			current_progress_value += PER_IMAGE_VALUE
+			making_image_popup.set_process_value(current_progress_value)
+	making_image_popup.hide()
 
 func open_add_files_interface():
 	add_files_dialog.popup_centered()
@@ -146,6 +182,9 @@ func remove_image_size_pressed_button(_but_index : int):
 	var _found_pos : int = current_store_images_type_selected.find(_but_index)
 	if _found_pos > -1:
 		current_store_images_type_selected.remove_at(_found_pos)
+
+func remove_input_file(_text : String):
+	current_files_selected.remove_at(current_files_selected.find(_text))
 
 func set_files_selected(_paths):
 	current_files_selected = _paths
@@ -163,7 +202,9 @@ func update_dest_path_label():
 func update_files_item_list():
 	clear_files_item_list()
 	for it in current_files_selected:
-		files_item_list.add_item(it)
+		var _new_input_file : InputFileItemControl = input_file_item_control_prefab.instantiate()
+		input_files_vbox.add_child(_new_input_file)
+		_new_input_file.set_label(it)
 
 func update_store_info():
 	for lab in store_info_vbox.get_children():
@@ -229,6 +270,9 @@ func _on_make_images_button_button_up():
 			show_incorrect_dialog("No Input files selected")
 	else:
 		show_incorrect_dialog("Dest folder not selected or not empty")
+
+func _on_credits_rich_text_meta_clicked(meta):
+	OS.shell_open(str(meta))
 
 ### TESTING ###
 func test_01():

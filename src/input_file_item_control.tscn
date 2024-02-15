@@ -1,0 +1,68 @@
+[gd_scene load_steps=5 format=3 uid="uid://crw6t8ymuwys2"]
+
+[ext_resource type="Theme" uid="uid://ctwdfkupbpb0h" path="res://src/themes/omi_theme.tres" id="1_6yeg7"]
+[ext_resource type="Script" path="res://src/scripts/input_file_item_control.gd" id="2_qxxq2"]
+[ext_resource type="Texture2D" uid="uid://bncyp5sd5n3ms" path="res://assets/sprites/trashcan.png" id="2_twwbn"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j0edg"]
+bg_color = Color(0.360784, 0.360784, 0.360784, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="InputFileItemControl" type="Control"]
+custom_minimum_size = Vector2(350, 32)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme = ExtResource("1_6yeg7")
+script = ExtResource("2_qxxq2")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_j0edg")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="EliminateButton" type="Button" parent="PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+icon = ExtResource("2_twwbn")
+icon_alignment = 1
+expand_icon = true
+
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="InputFileItemLabel" type="Label" parent="PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 16
+text = "File_01"
+vertical_alignment = 1
+autowrap_mode = 1
+
+[connection signal="button_up" from="PanelContainer/HBoxContainer/EliminateButton" to="." method="_on_eliminate_button_button_up"]

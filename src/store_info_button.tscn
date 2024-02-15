@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bnhc8qgkor7vf"]
+[gd_scene load_steps=6 format=3 uid="uid://bnhc8qgkor7vf"]
 
 [ext_resource type="Theme" uid="uid://ctwdfkupbpb0h" path="res://src/themes/omi_theme.tres" id="1_ckaq8"]
 [ext_resource type="StyleBox" uid="uid://cj41uyicv13o8" path="res://src/styles/store_info_button_normal_style.tres" id="2_wxgvo"]
+[ext_resource type="StyleBox" uid="uid://dydlfp1v5a76g" path="res://src/styles/store_info_button_hover_style.tres" id="3_agv7j"]
 [ext_resource type="StyleBox" uid="uid://bjwibhqbwoyn4" path="res://src/styles/store_info_button_pressed_style.tres" id="3_hx04v"]
 [ext_resource type="Script" path="res://src/scripts/store_info_button.gd" id="4_uqf46"]
 
@@ -20,8 +21,9 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = ExtResource("1_ckaq8")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = ExtResource("2_wxgvo")
+theme_override_styles/hover = ExtResource("3_agv7j")
 theme_override_styles/pressed = ExtResource("3_hx04v")
 toggle_mode = true
 text = "1024x756"

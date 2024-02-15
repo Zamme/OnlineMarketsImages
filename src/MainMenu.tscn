@@ -35,6 +35,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+custom_minimum_size = Vector2(1120, 620)
 layout_mode = 2
 
 [node name="TopHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
@@ -43,33 +44,54 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="PanelContainer/VBoxContainer/TopHBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 6
 theme = ExtResource("2_4lklx")
-text = "OMI"
+text = "OMI (Online Markets Images)"
 label_settings = SubResource("LabelSettings_7383h")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="ExitButton" type="Button" parent="PanelContainer/VBoxContainer/TopHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme = ExtResource("2_4lklx")
+theme_override_font_sizes/font_size = 36
+text = "Quit"
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
 [node name="CentralHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
+alignment = 1
 
 [node name="InputVBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer"]
 layout_mode = 2
+
+[node name="SourceFilesLabel" type="Label" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "Source Files"
 
 [node name="AddFilesButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
+theme_override_font_sizes/font_size = 30
 text = "Add files"
 
-[node name="FilesItemList" type="ItemList" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer"]
+custom_minimum_size = Vector2(500, 400)
+layout_mode = 2
+
+[node name="InputFilesVBox" type="VBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer/ScrollContainer"]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 2
 theme = ExtResource("2_4lklx")
-theme_override_font_sizes/font_size = 20
-select_mode = 1
-auto_height = true
-item_count = 1
-item_0/text = "file_01"
+theme_override_constants/separation = 5
 
 [node name="VSeparator" type="VSeparator" parent="PanelContainer/VBoxContainer/CentralHBoxContainer"]
 layout_mode = 2
@@ -80,7 +102,7 @@ layout_mode = 2
 [node name="StoretitleLabel" type="Label" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer"]
 layout_mode = 2
 theme = ExtResource("2_4lklx")
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 35
 text = "Store"
 horizontal_alignment = 1
 
@@ -89,12 +111,20 @@ layout_mode = 2
 
 [node name="AppStoreMenuButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.964706, 0.756863, 0, 1)
+theme_override_colors/font_hover_color = Color(1, 0.886275, 0.380392, 1)
+theme_override_font_sizes/font_size = 30
 toggle_mode = true
 button_group = SubResource("ButtonGroup_c1wii")
 text = "App Store"
 
 [node name="PlayStoreMenuButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.964706, 0.756863, 0, 1)
+theme_override_colors/font_hover_color = Color(1, 0.886275, 0.380392, 1)
+theme_override_font_sizes/font_size = 30
 toggle_mode = true
 button_group = SubResource("ButtonGroup_c1wii")
 text = "Play Store"
@@ -123,20 +153,35 @@ layout_mode = 2
 [node name="TargetVBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer"]
 layout_mode = 2
 
+[node name="DestFilesLabel" type="Label" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 35
+text = "Destination"
+
 [node name="SelectDestinationButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 30
 text = "Select Destination Folder"
 
 [node name="DestPathLabel" type="Label" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+custom_minimum_size = Vector2(280.495, 0)
 layout_mode = 2
+size_flags_horizontal = 0
 theme = ExtResource("2_4lklx")
+theme_override_colors/font_color = Color(1, 0.509804, 0.443137, 1)
+text = "None selected"
+autowrap_mode = 1
 
 [node name="PrefixLineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+visible = false
 layout_mode = 2
 placeholder_text = "Files Prefix"
 
 [node name="ExtensionHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 
 [node name="JPGCheckBox" type="CheckBox" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/ExtensionHBoxContainer"]
 layout_mode = 2
@@ -151,6 +196,7 @@ text = "PNG"
 
 [node name="SaveOrderingHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 
 [node name="ByImageCheckBox" type="CheckBox" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/SaveOrderingHBoxContainer"]
 layout_mode = 2
@@ -165,18 +211,23 @@ text = "By Resolution"
 
 [node name="MakeImagesButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.0588235, 0.8, 0.788235, 1)
+theme_override_font_sizes/font_size = 50
 text = "Make Images"
 
 [node name="BottomHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 10
-alignment = 1
 
-[node name="ExitButton" type="Button" parent="PanelContainer/VBoxContainer/BottomHBoxContainer"]
+[node name="CreditsRichText" type="RichTextLabel" parent="PanelContainer/VBoxContainer/BottomHBoxContainer"]
+custom_minimum_size = Vector2(900, 40)
 layout_mode = 2
-theme = ExtResource("2_4lklx")
-theme_override_font_sizes/font_size = 36
-text = "Quit"
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "[center]OMI by [color=yellow]Jaume Castells Carles[/color] ([url]https://www.zammedev.com[/url]) for [color=yellow]Vilo Games Studio[/color] ([url]https://www.vilogamesstudio.com[/url])[/center]"
+scroll_active = false
 
 [node name="AddFilesDialog" type="FileDialog" parent="."]
 title = "Open File(s)"
@@ -206,7 +257,6 @@ access = 2
 title = "Making image ..."
 position = Vector2i(100, 100)
 size = Vector2i(200, 200)
-visible = true
 min_size = Vector2i(200, 200)
 script = ExtResource("5_cl5u6")
 
@@ -231,6 +281,7 @@ text = "Current Image name"
 layout_mode = 2
 value = 50.0
 
+[connection signal="button_up" from="PanelContainer/VBoxContainer/TopHBoxContainer/ExitButton" to="." method="_on_exit_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer/AddFilesButton" to="." method="_on_add_files_button_button_up"]
 [connection signal="toggled" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer/AppStoreMenuButton" to="." method="_on_app_store_menu_button_toggled"]
 [connection signal="toggled" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/HBoxContainer/PlayStoreMenuButton" to="." method="_on_play_store_menu_button_toggled"]
@@ -238,6 +289,6 @@ value = 50.0
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/StoreOptionsHBoxContainer/NoneButton" to="." method="_on_none_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/SelectDestinationButton" to="." method="_on_select_destination_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/MakeImagesButton" to="." method="_on_make_images_button_button_up"]
-[connection signal="button_up" from="PanelContainer/VBoxContainer/BottomHBoxContainer/ExitButton" to="." method="_on_exit_button_button_up"]
+[connection signal="meta_clicked" from="PanelContainer/VBoxContainer/BottomHBoxContainer/CreditsRichText" to="." method="_on_credits_rich_text_meta_clicked"]
 [connection signal="files_selected" from="AddFilesDialog" to="AddFilesDialog" method="_on_files_selected"]
 [connection signal="dir_selected" from="DestFileDialog" to="." method="_on_dest_file_dialog_dir_selected"]

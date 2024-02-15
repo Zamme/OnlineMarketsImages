@@ -1,62 +1,27 @@
 [
   {
     "ImageID": 0,
-    "SizeA": 1242,
-    "SizeB": 2208
+    "SizeA": 324,
+    "SizeB": 576
   },
   {
     "ImageID": 1,
-    "SizeA": 640,
-    "SizeB": 960
+    "SizeA": 513,
+    "SizeB": 912
   },
   {
     "ImageID": 2,
-    "SizeA": 640,
-    "SizeB": 1096
+    "SizeA": 756,
+    "SizeB": 1344
   },
   {
     "ImageID": 3,
-    "SizeA": 750,
-    "SizeB": 1334
+    "SizeA": 900,
+    "SizeB": 1600
   },
   {
     "ImageID": 4,
     "SizeA": 1080,
-    "SizeB": 2340
-  },
-  {
-    "ImageID": 5,
-    "SizeA": 1179,
-    "SizeB": 2556
-  },
-  {
-    "ImageID": 6,
-    "SizeA": 1242,
-    "SizeB": 2688
-  },
-  {
-    "ImageID": 7,
-    "SizeA": 1290,
-    "SizeB": 2796
-  },
-  {
-    "ImageID": 8,
-    "SizeA": 2048,
-    "SizeB": 2732
-  },
-  {
-    "ImageID": 9,
-    "SizeA": 1640,
-    "SizeB": 2360
-  },
-  {
-    "ImageID": 10,
-    "SizeA": 1668,
-    "SizeB": 2224
-  },
-  {
-    "ImageID": 11,
-    "SizeA": 1536,
-    "SizeB": 2048
+    "SizeB": 1920
   }
 ]

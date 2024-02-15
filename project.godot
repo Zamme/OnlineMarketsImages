@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Omi Code"
+config/name="Omi"
 run/main_scene="res://src/MainMenu.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
@@ -22,6 +22,7 @@ GlobalLinks="*res://src/scripts/GlobalLinks.gd"
 [display]
 
 window/stretch/mode="viewport"
+window/stretch/aspect="expand"
 
 [editor_plugins]
 
