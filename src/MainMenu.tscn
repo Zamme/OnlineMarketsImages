@@ -174,6 +174,10 @@ theme_override_colors/font_color = Color(1, 0.509804, 0.443137, 1)
 text = "None selected"
 autowrap_mode = 1
 
+[node name="OpenFileManagerButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
+layout_mode = 2
+text = "Open In File Manager"
+
 [node name="PrefixLineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
 visible = false
 layout_mode = 2
@@ -212,10 +216,14 @@ text = "By Resolution"
 [node name="MakeImagesButton" type="Button" parent="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+size_flags_vertical = 10
 theme_override_colors/font_color = Color(0, 1, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.0588235, 0.8, 0.788235, 1)
 theme_override_font_sizes/font_size = 50
 text = "Make Images"
+
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
 
 [node name="BottomHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
@@ -253,33 +261,55 @@ access = 2
 
 [node name="IncorrectAcceptDialog" type="AcceptDialog" parent="."]
 
-[node name="MakingImagePopup" type="Popup" parent="."]
-title = "Making image ..."
+[node name="MakingImagePopup" type="Window" parent="."]
+title = "Making images ..."
 position = Vector2i(100, 100)
-size = Vector2i(200, 200)
+size = Vector2i(217, 200)
+exclusive = true
 min_size = Vector2i(200, 200)
 script = ExtResource("5_cl5u6")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MakingImagePopup"]
+custom_minimum_size = Vector2(180, 180)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -54.5
-offset_top = -22.0
+offset_top = -37.0
 offset_right = 54.5
-offset_bottom = 22.0
+offset_bottom = 37.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="CurrentImageProcessedNameLabel" type="Label" parent="MakingImagePopup/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 2
 text = "Current Image name"
 
 [node name="TotalProcessProgressBar" type="ProgressBar" parent="MakingImagePopup/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 6
 value = 50.0
+
+[node name="ProgressButtonsHBoxContainer" type="HBoxContainer" parent="MakingImagePopup/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+
+[node name="CancelButton" type="Button" parent="MakingImagePopup/VBoxContainer/ProgressButtonsHBoxContainer"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="ViewFileManagerButton" type="Button" parent="MakingImagePopup/VBoxContainer/ProgressButtonsHBoxContainer"]
+layout_mode = 2
+text = "View"
+
+[node name="OkButton" type="Button" parent="MakingImagePopup/VBoxContainer/ProgressButtonsHBoxContainer"]
+layout_mode = 2
+text = "OK"
 
 [connection signal="button_up" from="PanelContainer/VBoxContainer/TopHBoxContainer/ExitButton" to="." method="_on_exit_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/InputVBoxContainer/AddFilesButton" to="." method="_on_add_files_button_button_up"]
@@ -288,7 +318,11 @@ value = 50.0
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/StoreOptionsHBoxContainer/AllButton" to="." method="_on_all_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/MarketsVBoxContainer/StoreOptionsHBoxContainer/NoneButton" to="." method="_on_none_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/SelectDestinationButton" to="." method="_on_select_destination_button_button_up"]
+[connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/OpenFileManagerButton" to="." method="_on_open_file_manager_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/CentralHBoxContainer/TargetVBoxContainer/MakeImagesButton" to="." method="_on_make_images_button_button_up"]
 [connection signal="meta_clicked" from="PanelContainer/VBoxContainer/BottomHBoxContainer/CreditsRichText" to="." method="_on_credits_rich_text_meta_clicked"]
 [connection signal="files_selected" from="AddFilesDialog" to="AddFilesDialog" method="_on_files_selected"]
 [connection signal="dir_selected" from="DestFileDialog" to="." method="_on_dest_file_dialog_dir_selected"]
+[connection signal="button_up" from="MakingImagePopup/VBoxContainer/ProgressButtonsHBoxContainer/CancelButton" to="MakingImagePopup" method="_on_cancel_button_button_up"]
+[connection signal="button_up" from="MakingImagePopup/VBoxContainer/ProgressButtonsHBoxContainer/ViewFileManagerButton" to="MakingImagePopup" method="_on_view_file_manager_button_button_up"]
+[connection signal="button_up" from="MakingImagePopup/VBoxContainer/ProgressButtonsHBoxContainer/OkButton" to="MakingImagePopup" method="_on_ok_button_button_up"]

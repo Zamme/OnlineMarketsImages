@@ -1,6 +1,6 @@
 class_name MainMenu extends Control
 
-
+const SIMULATED_DELAY_SEC = 0.1
 const JSONS_DIRPATH = "res://assets/jsons/"
 const APPSTORE_JSON_FILENAME = "OMI_Stores_Sizes - AppStore.json"
 const PLAYSTORE_JSON_FILENAME = "OMI_Stores_Sizes - PlayStore.json"
@@ -19,9 +19,13 @@ const DEFAULT_PREFIX = "OMI_Image_"
 @onready var by_image_check : CheckBox = find_child("ByImageCheckBox")
 @onready var by_resolution_check : CheckBox = find_child("ByResolutionCheckBox")
 @onready var making_image_popup : MakingImagePopup = find_child("MakingImagePopup")
+@onready var open_file_manager_button : Button = find_child("OpenFileManagerButton")
 
 var store_info_button_prefab : PackedScene = load("res://src/store_info_button.tscn")
 var input_file_item_control_prefab : PackedScene = load("res://src/input_file_item_control.tscn")
+
+var thread = null
+var exit_thread : bool = false
 
 var markets : Array
 
@@ -36,6 +40,8 @@ func _ready():
 	get_markets()
 	update_files_item_list()
 	update_store_options_hbox()
+	update_open_file_manager_button()
+	making_image_popup.hide()
 	#test_01()
 
 func add_files_selected(_paths):
@@ -62,6 +68,13 @@ func get_markets():
 	market_entity = MarketEntity.new("PlayStore", 1, json_result)
 	markets.append(market_entity)
 	#print(markets)
+
+func images_done():
+	# Always wait for threads to finish, this is required on Windows.
+	thread.wait_to_finish()
+	making_image_popup.call_deferred("set_image_name", "Finished")
+	making_image_popup.call_deferred("set_process_value", 100)
+	making_image_popup.call_deferred("set_on_process", false)
 
 func is_dest_correct():
 	var _is_correct : bool = true
@@ -90,31 +103,40 @@ func is_store_correct():
 
 func make_image(_source_image : Image, _image_entity : ImageEntity):
 	var _image_created : Image = Image.new()
-	print("Making image ", _image_entity._ID, " ", _image_entity._SizeA, "x", _image_entity._SizeB)
+	#print("Making image ", _image_entity._ID, " ", _image_entity._SizeA, "x", _image_entity._SizeB)
 	_image_created.copy_from(_source_image)
 	_image_created.resize(_image_entity._SizeA, _image_entity._SizeB, Image.INTERPOLATE_BILINEAR)
 	return _image_created
 
-func make_images_by_image():
+func make_images():
 	print("Making images...")
+	exit_thread = false
 	#print(current_store_images_type_selected)
-	making_image_popup.reset_values()
-	making_image_popup.popup_centered()
-	@warning_ignore("integer_division")
-	var PER_IMAGE_VALUE : float = 100/(current_files_selected.size() * current_store_images_type_selected.size())
-	var current_progress_value = 0
+	making_image_popup.call_deferred("reset_values")
+	making_image_popup.call_deferred("popup_centered")
+	making_image_popup.call_deferred("set_on_process", true)
+	#await get_tree().process_frame
+	var PER_IMAGE_VALUE : float = 100.0/(current_files_selected.size() * current_store_images_type_selected.size())
+	var current_progress_value : float = 0.0
 	var market_name : String = markets[current_store_id_selected]._Name
 	for current_source in current_files_selected:
+		if exit_thread:
+			break
 		var _current_source_name : String = current_source.get_file()
 		var _n_parts : Array = _current_source_name.split(".")
 		_current_source_name = _n_parts[0]
 		var _source_image : Image = Image.load_from_file(current_source)
 		var _new_dir_name : String = _current_source_name
 		for current_image_size_index in current_store_images_type_selected:
+			if exit_thread:
+				break
 			var _image_entity : ImageEntity = markets[current_store_id_selected]._Images[current_image_size_index]
 			var new_image = make_image(_source_image, _image_entity)
 			var _file_name : String = prefix_line_edit.text + str(_image_entity._SizeA) + "x" + str(_image_entity._SizeB)
-			making_image_popup.set_image_name(_current_source_name + "_" + _file_name)
+			var _arg_1 = _current_source_name + "_" + _file_name
+			making_image_popup.call_deferred("set_image_name", _arg_1)
+			if by_resolution_check.button_pressed:
+				_new_dir_name = _file_name
 			if DirAccess.dir_exists_absolute(current_dest_path + "/" + market_name):
 				pass
 			else:
@@ -131,46 +153,9 @@ func make_images_by_image():
 				_dest_path += ".png"
 				new_image.save_png(_dest_path)
 			current_progress_value += PER_IMAGE_VALUE
-			making_image_popup.set_process_value(current_progress_value)
-	making_image_popup.hide()
-
-func make_images_by_resolution():
-	print("Making images...")
-	#print(current_store_images_type_selected)
-	making_image_popup.reset_values()
-	making_image_popup.popup_centered()
-	@warning_ignore("integer_division")
-	var PER_IMAGE_VALUE : float = 100/(current_files_selected.size() * current_store_images_type_selected.size())
-	var current_progress_value = 0
-	var market_name : String = markets[current_store_id_selected]._Name
-	for current_source in current_files_selected:
-		var _current_source_name : String = current_source.get_file()
-		var _n_parts : Array = _current_source_name.split(".")
-		_current_source_name = _n_parts[0]
-		var _source_image : Image = Image.load_from_file(current_source)
-		for current_image_size_index in current_store_images_type_selected:
-			var _image_entity : ImageEntity = markets[current_store_id_selected]._Images[current_image_size_index]
-			var new_image = make_image(_source_image, _image_entity)
-			var _file_name : String = str(_image_entity._SizeA) + "x" + str(_image_entity._SizeB)
-			var _new_dir_name : String = _file_name
-			if DirAccess.dir_exists_absolute(current_dest_path + "/" + market_name):
-				pass
-			else:
-				DirAccess.make_dir_absolute(current_dest_path + "/" + market_name)
-			if DirAccess.dir_exists_absolute(current_dest_path + "/" + market_name + "/" + _new_dir_name):
-				pass
-			else:
-				DirAccess.make_dir_absolute(current_dest_path + "/" + market_name + "/" + _new_dir_name)
-			var _dest_path : String = current_dest_path + "/" + market_name + "/" + _new_dir_name + "/" + _current_source_name + "_" + _file_name
-			if jpg_check.button_pressed:
-				_dest_path += ".jpg"
-				new_image.save_jpg(_dest_path)
-			else:
-				_dest_path += ".png"
-				new_image.save_png(_dest_path)
-			current_progress_value += PER_IMAGE_VALUE
-			making_image_popup.set_process_value(current_progress_value)
-	making_image_popup.hide()
+			making_image_popup.call_deferred("set_process_value", current_progress_value)
+			OS.delay_msec(int(SIMULATED_DELAY_SEC * 1000.0))
+	call_deferred("images_done")
 
 func open_add_files_interface():
 	add_files_dialog.popup_centered()
@@ -196,8 +181,12 @@ func show_incorrect_dialog(_message : String):
 	incorrect_accept_dialog.dialog_text = _message
 	incorrect_accept_dialog.popup_centered()
 
+func stop_making_images():
+	exit_thread = true
+
 func update_dest_path_label():
 	dest_path_label.text = current_dest_path
+	update_open_file_manager_button()
 
 func update_files_item_list():
 	clear_files_item_list()
@@ -205,6 +194,9 @@ func update_files_item_list():
 		var _new_input_file : InputFileItemControl = input_file_item_control_prefab.instantiate()
 		input_files_vbox.add_child(_new_input_file)
 		_new_input_file.set_label(it)
+
+func update_open_file_manager_button():
+	open_file_manager_button.disabled = (current_dest_path == "")
 
 func update_store_info():
 	for lab in store_info_vbox.get_children():
@@ -260,10 +252,8 @@ func _on_make_images_button_button_up():
 	if is_dest_correct():
 		if is_input_files_correct():
 			if is_store_correct():
-				if by_image_check.button_pressed:
-					make_images_by_image()
-				else:
-					make_images_by_resolution()
+				thread = Thread.new()
+				thread.start(make_images.bind())
 			else:
 				show_incorrect_dialog("No Store Images selected")
 		else:
@@ -274,11 +264,16 @@ func _on_make_images_button_button_up():
 func _on_credits_rich_text_meta_clicked(meta):
 	OS.shell_open(str(meta))
 
+func _on_open_file_manager_button_button_up():
+	OS.shell_show_in_file_manager(current_dest_path)
+
+
 ### TESTING ###
 func test_01():
 	_on_dest_file_dialog_dir_selected("/mnt/1704BF56620B1DF2/Google_Drive/Vilo_Studio/InDev_Apps/OnlineMarketImages/t1/")
 	_on_app_store_menu_button_toggled(true)
 	set_files_selected(["/mnt/1704BF56620B1DF2/Google_Drive/Vilo_Studio/InDev_Apps/OnlineMarketImages/PS_Shots/IMG_0285.PNG"])
+	_on_all_button_button_up()
 	#current_dest_path = "/mnt/1704BF56620B1DF2/Google_Drive/Vilo_Studio/InDev_Apps/OnlineMarketImages/t1/"
 	#current_files_selected = ["/mnt/1704BF56620B1DF2/Google_Drive/Vilo_Studio/InDev_Apps/OnlineMarketImages/PS_Shots/IMG_0285.PNG"]
 	#current_store_id_selected = 0

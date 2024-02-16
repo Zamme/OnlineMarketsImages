@@ -24,10 +24,6 @@ GlobalLinks="*res://src/scripts/GlobalLinks.gd"
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/SimpleTODO/plugin.cfg")
-
 [filesystem]
 
 import/blender/enabled=false
