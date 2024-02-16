@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://brii76d4x381y"]
+[gd_scene load_steps=11 format=3 uid="uid://brii76d4x381y"]
 
 [ext_resource type="Script" path="res://src/scripts/MainMenu.gd" id="1_0wli3"]
 [ext_resource type="Theme" uid="uid://ctwdfkupbpb0h" path="res://src/themes/omi_theme.tres" id="2_4lklx"]
+[ext_resource type="Texture2D" uid="uid://6artdtsp2ch3" path="res://omi_icon.png" id="3_6dyo8"]
 [ext_resource type="FontFile" uid="uid://b8i0n0pvdi16k" path="res://assets/fonts/Sunregular.ttf" id="3_uk4w8"]
 [ext_resource type="Script" path="res://src/scripts/AddFilesDialog.gd" id="4_mwlbk"]
 [ext_resource type="Script" path="res://src/scripts/MakingImagePopup.gd" id="5_cl5u6"]
@@ -41,6 +42,15 @@ layout_mode = 2
 [node name="TopHBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/VBoxContainer/TopHBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource("3_6dyo8")
+expand_mode = 3
+stretch_mode = 4
 
 [node name="TitleLabel" type="Label" parent="PanelContainer/VBoxContainer/TopHBoxContainer"]
 layout_mode = 2
@@ -265,6 +275,7 @@ access = 2
 title = "Making images ..."
 position = Vector2i(100, 100)
 size = Vector2i(217, 200)
+visible = false
 exclusive = true
 min_size = Vector2i(200, 200)
 script = ExtResource("5_cl5u6")
